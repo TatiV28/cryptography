@@ -1,0 +1,29 @@
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
+import base64
+
+def generate_rsa_keys():
+    key = RSA.generate(2048)
+    private_key = key
+    public_key = key.publickey()
+    return private_key, public_key
+
+def rsa_encrypt(message, public_key):
+    cipher = PKCS1_OAEP.new(public_key)
+    ciphertext = cipher.encrypt(message.encode())
+    return base64.b64encode(ciphertext).decode('utf-8')
+
+def rsa_decrypt(ciphertext, private_key):
+    cipher = PKCS1_OAEP.new(private_key)
+    ciphertext = base64.b64decode(ciphertext)
+    plaintext = cipher.decrypt(ciphertext)
+    return plaintext.decode('utf-8')
+
+if __name__ == "__main__":
+    private_key, public_key = generate_rsa_keys()
+    message = "Confidential Data"
+    encrypted = rsa_encrypt(message, public_key)
+    decrypted = rsa_decrypt(encrypted, private_key)
+    print(f"Original: {message}")
+    print(f"Encrypted: {encrypted}")
+    print(f"Decrypted: {decrypted}")
