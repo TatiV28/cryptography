@@ -1,0 +1,21 @@
+import hashlib
+import os
+
+def hash_file(file_path):
+    hasher = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        while chunk := f.read(8192):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+def check_integrity(file_path, original_hash):
+    current_hash = hash_file(file_path)
+    return current_hash == original_hash
+
+if __name__ == "__main__":
+    file_path = "example.txt"
+    with open(file_path, 'w') as f:
+        f.write("Test data")
+    original_hash = hash_file(file_path)
+    print(f"Original Hash: {original_hash}")
+    print(f"Integrity Check: {check_integrity(file_path, original_hash)}")
