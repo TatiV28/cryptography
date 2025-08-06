@@ -1,0 +1,18 @@
+import ssl
+import socket
+
+def secure_server(host, port, certfile, keyfile):
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    context.load_cert_chain(certfile=certfile, keyfile=keyfile)
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind((host, port))
+        sock.listen(5)
+        with context.wrap_socket(sock, server_side=True) as ssock:
+            conn, addr = ssock.accept()
+            with conn:
+                data = conn.recv(1024)
+                print(f"Received: {data.decode()}")
+                conn.sendall(b"Hello, secure client!")
+
+if __name__ == "__main__":
+    secure_server("localhost", 8443, "server.crt", "server.key")
