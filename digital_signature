@@ -1,0 +1,27 @@
+from Crypto.PublicKey import RSA
+from Crypto.Signature import pkcs1_15
+from Crypto.Hash import SHA256
+import base64
+
+def generate_signature(message, private_key):
+    h = SHA256.new(message.encode())
+    signature = pkcs1_15.new(private_key).sign(h)
+    return base64.b64encode(signature).decode('utf-8')
+
+def verify_signature(message, signature, public_key):
+    h = SHA256.new(message.encode())
+    signature = base64.b64decode(signature)
+    try:
+        pkcs1_15.new(public_key).verify(h, signature)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+if __name__ == "__main__":
+    private_key = RSA.generate(2048)
+    public_key = private_key.publickey()
+    message = "Signed Message"
+    signature = generate_signature(message, private_key)
+    print(f"Message: {message}")
+    print(f"Signature: {signature}")
+    print(f"Verification: {verify_signature(message, signature, public_key)}")
