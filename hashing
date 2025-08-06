@@ -1,0 +1,17 @@
+import hashlib
+
+def hash_data(data, algorithm='sha256'):
+    if algorithm == 'md5':
+        hasher = hashlib.md5()
+    elif algorithm == 'sha1':
+        hasher = hashlib.sha1()
+    else:
+        hasher = hashlib.sha256()
+    hasher.update(data.encode())
+    return hasher.hexdigest()
+
+if __name__ == "__main__":
+    message = "Data to hash"
+    print(f"MD5: {hash_data(message, 'md5')}")
+    print(f"SHA1: {hash_data(message, 'sha1')}")
+    print(f"SHA256: {hash_data(message, 'sha256')}")
