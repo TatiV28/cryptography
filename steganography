@@ -1,0 +1,41 @@
+from PIL import Image
+
+def hide_message(image_path, message, output_path):
+    img = Image.open(image_path)
+    pixels = img.load()
+    message += '###'  # Delimiter
+    message_bits = ''.join(format(ord(c), '08b') for c in message)
+    bit_index = 0
+    for x in range(img.width):
+        for y in range(img.height):
+            if bit_index < len(message_bits):
+                r, g, b = pixels[x, y]
+                r = (r & ~1) | int(message_bits[bit_index])
+                pixels[x, y] = (r, g, b)
+                bit_index += 1
+            else:
+                img.save(output_path)
+                return
+    img.save(output_path)
+
+def extract_message(image_path):
+    img = Image.open(image_path)
+    pixels = img.load()
+    message_bits = ""
+    for x in range(img.width):
+        for y in range(img.height):
+            r, _, _ = pixels[x, y]
+            message_bits += str(r & 1)
+            if len(message_bits) % 8 == 0:
+                char = chr(int(message_bits[-8:], 2))
+                if message_bits[-24:] == ''.join(format(ord('#'), '08b') for _ in range(3)):
+                    return message[:-3]
+                message += char
+    return message
+
+if __name__ == "__main__":
+    message = "Hidden Message"
+    hide_message("input.png", message, "output.png")
+    extracted = extract_message("output.png")
+    print(f"Hidden Message: {message}")
+    print(f"Extracted Message: {extracted}")
