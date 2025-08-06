@@ -1,0 +1,23 @@
+import re
+
+def detect_sql_injection(query):
+    sql_patterns = [
+        r'\b(union|select|insert|delete|update|drop|alter)\b',
+        r'--',
+        r';\s*$',
+        r'\b(or|and)\b.*?=.*?',
+    ]
+    for pattern in sql_patterns:
+        if re.search(pattern, query, re.IGNORECASE):
+            return True
+    return False
+
+if __name__ == "__main__":
+    queries = [
+        "SELECT * FROM users WHERE id = 1",
+        "SELECT * FROM users WHERE id = 1 OR 1=1",
+        "DROP TABLE users; --",
+    ]
+    for query in queries:
+        print(f"Query: {query}")
+        print(f"SQL Injection Detected: {detect_sql_injection(query)}\n")
