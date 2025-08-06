@@ -1,0 +1,18 @@
+import pyotp
+import time
+
+def generate_otp(secret):
+    totp = pyotp.TOTP(secret)
+    return totp.now()
+
+def verify_otp(secret, otp):
+    totp = pyotp.TOTP(secret)
+    return totp.verify(otp)
+
+if __name__ == "__main__":
+    secret = pyotp.random_base32()
+    otp = generate_otp(secret)
+    print(f"Generated OTP: {otp}")
+    print(f"Verification: {verify_otp(secret, otp)}")
+    time.sleep(31)  # OTP changes after 30 seconds
+    print(f"Old OTP Verification: {verify_otp(secret, otp)}")
