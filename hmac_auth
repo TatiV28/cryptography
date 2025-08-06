@@ -1,0 +1,18 @@
+import hmac
+import hashlib
+import base64
+
+def generate_hmac(message, key):
+    return base64.b64encode(hmac.new(key.encode(), message.encode(), hashlib.sha256).digest()).decode()
+
+def verify_hmac(message, key, received_hmac):
+    expected_hmac = generate_hmac(message, key)
+    return hmac.compare_digest(received_hmac.encode(), expected_hmac.encode())
+
+if __name__ == "__main__":
+    message = "Authenticated Message"
+    key = "secret_key"
+    hmac_value = generate_hmac(message, key)
+    print(f"Message: {message}")
+    print(f"HMAC: {hmac_value}")
+    print(f"Verification: {verify_hmac(message, key, hmac_value)}")
