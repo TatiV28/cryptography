@@ -1,0 +1,15 @@
+from Crypto.Protocol.KDF import PBKDF2
+from Crypto.Hash import SHA256
+from Crypto.Random import get_random_bytes
+
+def derive_key(password, salt=None, length=32):
+    if not salt:
+        salt = get_random_bytes(16)
+    key = PBKDF2(password.encode(), salt, dkLen=length, count=100000, hmac_hash_module=SHA256)
+    return key, salt
+
+if __name__ == "__main__":
+    password = "MyComplexPassword"
+    key, salt = derive_key(password)
+    print(f"Derived Key: {key.hex()}")
+    print(f"Salt: {salt.hex()}")
