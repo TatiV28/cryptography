@@ -1,0 +1,13 @@
+import ssl
+import socket
+
+def secure_client(host, port):
+    context = ssl.create_default_context()
+    with socket.create_connection((host, port)) as sock:
+        with context.wrap_socket(sock, server_hostname=host) as ssock:
+            ssock.sendall(b"Hello, secure server!")
+            data = ssock.recv(1024)
+            print(f"Received: {data.decode()}")
+
+if __name__ == "__main__":
+    secure_client("localhost", 8443)
