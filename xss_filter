@@ -1,0 +1,21 @@
+import html
+
+def sanitize_input(user_input):
+    return html.escape(user_input)
+
+def detect_xss(user_input):
+    xss_patterns = [
+        r'<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>',
+        r'on\w*="[^"]*"',
+        r'javascript:[^"]*',
+    ]
+    for pattern in xss_patterns:
+        if re.search(pattern, user_input, re.IGNORECASE):
+            return True
+    return False
+
+if __name__ == "__main__":
+    user_input = '<script>alert("XSS")</script>'
+    print(f"Original Input: {user_input}")
+    print(f"Sanitized Input: {sanitize_input(user_input)}")
+    print(f"XSS Detected: {detect_xss(user_input)}")
