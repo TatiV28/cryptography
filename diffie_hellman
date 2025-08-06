@@ -1,0 +1,19 @@
+from Crypto.Random import get_random_bytes
+import secrets
+
+def generate_dh_keys(p=23, g=5):
+    private_key = secrets.randbelow(p-1) + 1
+    public_key = pow(g, private_key, p)
+    return private_key, public_key
+
+def compute_shared_secret(other_public_key, private_key, p=23):
+    return pow(other_public_key, private_key, p)
+
+if __name__ == "__main__":
+    p, g = 23, 5
+    alice_private, alice_public = generate_dh_keys(p, g)
+    bob_private, bob_public = generate_dh_keys(p, g)
+    alice_shared = compute_shared_secret(bob_public, alice_private, p)
+    bob_shared = compute_shared_secret(alice_public, bob_private, p)
+    print(f"Alice's Shared Secret: {alice_shared}")
+    print(f"Bob's Shared Secret: {bob_shared}")
